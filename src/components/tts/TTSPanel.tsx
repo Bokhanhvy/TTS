@@ -19,6 +19,8 @@ import { toast } from "sonner";
 import { LANGUAGES, buildVoicesForLanguage, avatarUrl, type Voice } from "@/lib/voices";
 import { fetchPreviewAudio } from "@/lib/speech";
 import { useI18n } from "@/lib/i18n";
+import { useAuth } from "@/hooks/useAuth";
+import { saveTtsHistory } from "@/lib/tts-history.functions";
 
 const EMOTIONS = [
   "Neutral", "Friendly", "Warm", "Happy", "Excited",
@@ -61,6 +63,7 @@ type HistoryItem = {
 
 export function TTSPanel() {
   const { t } = useI18n();
+  const { user } = useAuth();
   const [text, setText] = useState("The future of building happens together. Tools and trends evolve, but collaboration endures.");
   const [langCode, setLangCode] = useState("en-US");
   const [genderFilter, setGenderFilter] = useState<"All" | "Female" | "Male">("All");
@@ -321,13 +324,43 @@ export function TTSPanel() {
         language: language.label,
         url,
         createdAt: Date.now(),
-        user: "bekhanhvy",
+        user: user?.email ?? "guest",
       };
       setProgress(100);
       setProgressLabel("Done");
       setResult(item);
       setHistory((h) => [item, ...h].slice(0, 100));
       toast.success("Audio generated");
+
+      // Persist to server so it shows up in the History tab across devices.
+      if (user) {
+        try {
+          const buf = await blob.arrayBuffer();
+          // base64-encode in chunks to avoid call-stack overflow on big buffers
+          let bin = "";
+          const view = new Uint8Array(buf);
+          const CHUNK = 0x8000;
+          for (let i = 0; i < view.length; i += CHUNK) {
+            bin += String.fromCharCode.apply(null, Array.from(view.subarray(i, i + CHUNK)));
+          }
+          const audio_base64 = btoa(bin);
+          await saveTtsHistory({
+            data: {
+              text,
+              voice_name: selectedVoice.name,
+              voice_gender: selectedVoice.gender,
+              voice_age: selectedVoice.age,
+              language: language.label,
+              language_code: langCode,
+              settings: { speed, pitch, volume, emotion, naturalness, expressiveness, stability, pauseStrength },
+              audio_base64,
+              audio_mime: blob.type || "audio/mpeg",
+            },
+          });
+        } catch (err) {
+          console.warn("History save failed", err);
+        }
+      }
     } catch (e) {
       if ((e as Error).name === "AbortError") {
         toast.info("Generation cancelled");
