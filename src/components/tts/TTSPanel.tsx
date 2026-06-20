@@ -449,6 +449,24 @@ export function TTSPanel() {
                 <><Headphones className="h-3.5 w-3.5 mr-1.5" /> {t("tts.preview")}</>
               )}
             </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => {
+                stopPreview();
+                abortRef.current?.abort();
+                setText("");
+                setResult(null);
+                setProgress(0);
+                setProgressLabel("");
+                setPreviewError(null);
+                toast.success(t("tts.cleared") ?? "Cleared");
+              }}
+              disabled={generating}
+              className="text-muted-foreground hover:text-destructive"
+            >
+              <Trash2 className="h-3.5 w-3.5 mr-1.5" /> {t("tts.clearAll") ?? "Clear all"}
+            </Button>
             <span className="text-[11px] sm:text-xs text-muted-foreground">{t("tts.previewHint")}</span>
             {previewError && (
               <span className="flex items-center gap-1 text-[11px] sm:text-xs text-destructive">
