@@ -460,12 +460,12 @@ export function TTSPanel() {
                 setProgress(0);
                 setProgressLabel("");
                 setPreviewError(null);
-                toast.success(t("tts.cleared") ?? "Cleared");
+                toast.success(t("tts.cleared"));
               }}
               disabled={generating}
               className="text-muted-foreground hover:text-destructive"
             >
-              <Trash2 className="h-3.5 w-3.5 mr-1.5" /> {t("tts.clearAll") ?? "Clear all"}
+              <Trash2 className="h-3.5 w-3.5 mr-1.5" /> {t("tts.clearAll")}
             </Button>
             <span className="text-[11px] sm:text-xs text-muted-foreground">{t("tts.previewHint")}</span>
             {previewError && (
