@@ -71,10 +71,21 @@ function IndexInner() {
               <Languages className="h-4 w-4" /> <span className="truncate">{t("tab.translate")}</span>
             </TabsTrigger>
           </TabsList>
-          <TabsContent value="tts" className="mt-8">
+          {/* forceMount keeps both panels in the DOM so user input, generated
+              audio, translation results, and voice settings survive tab switches.
+              Radix hides inactive panels via data-state; we hide with Tailwind. */}
+          <TabsContent
+            value="tts"
+            forceMount
+            className="mt-8 data-[state=inactive]:hidden"
+          >
             <TTSPanel />
           </TabsContent>
-          <TabsContent value="translate" className="mt-8">
+          <TabsContent
+            value="translate"
+            forceMount
+            className="mt-8 data-[state=inactive]:hidden"
+          >
             <TranslatePanel />
           </TabsContent>
         </Tabs>
