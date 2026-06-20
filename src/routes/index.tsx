@@ -6,7 +6,9 @@ import { LangToggle } from "@/components/LangToggle";
 import { I18nProvider, useI18n } from "@/lib/i18n";
 import { TTSPanel } from "@/components/tts/TTSPanel";
 import { TranslatePanel } from "@/components/translate/TranslatePanel";
-import { Sparkles, Mic2, Languages } from "lucide-react";
+import { HistoryPanel } from "@/components/HistoryPanel";
+import { UserMenu } from "@/components/UserMenu";
+import { Sparkles, Mic2, Languages, History as HistoryIcon } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -47,6 +49,7 @@ function IndexInner() {
           <div className="flex items-center gap-1 shrink-0">
             <LangToggle />
             <ThemeToggle />
+            <UserMenu />
           </div>
         </div>
       </header>
@@ -63,12 +66,15 @@ function IndexInner() {
         </section>
 
         <Tabs defaultValue="tts" className="w-full">
-          <TabsList className="grid grid-cols-2 max-w-md mx-auto h-11 p-1 w-full">
+          <TabsList className="grid grid-cols-3 max-w-lg mx-auto h-11 p-1 w-full">
             <TabsTrigger value="tts" className="gap-2 data-[state=active]:shadow-sm">
               <Mic2 className="h-4 w-4" /> <span className="truncate">{t("tab.tts")}</span>
             </TabsTrigger>
             <TabsTrigger value="translate" className="gap-2 data-[state=active]:shadow-sm">
               <Languages className="h-4 w-4" /> <span className="truncate">{t("tab.translate")}</span>
+            </TabsTrigger>
+            <TabsTrigger value="history" className="gap-2 data-[state=active]:shadow-sm">
+              <HistoryIcon className="h-4 w-4" /> <span className="truncate">History</span>
             </TabsTrigger>
           </TabsList>
           {/* forceMount keeps both panels in the DOM so user input, generated
@@ -87,6 +93,9 @@ function IndexInner() {
             className="mt-8 data-[state=inactive]:hidden"
           >
             <TranslatePanel />
+          </TabsContent>
+          <TabsContent value="history" className="mt-8">
+            <HistoryPanel />
           </TabsContent>
         </Tabs>
       </main>

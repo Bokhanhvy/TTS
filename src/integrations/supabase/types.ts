@@ -14,16 +14,233 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      admin_emails: {
+        Row: {
+          created_at: string
+          email: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+        }
+        Relationships: []
+      }
+      credit_logs: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          metadata: Json
+          reason: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          metadata?: Json
+          reason: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          metadata?: Json
+          reason?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      plans: {
+        Row: {
+          code: string
+          created_at: string
+          features: Json
+          id: string
+          is_active: boolean
+          monthly_credits: number
+          name: string
+          price_cents: number
+          sort_order: number
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          features?: Json
+          id?: string
+          is_active?: boolean
+          monthly_credits?: number
+          name: string
+          price_cents?: number
+          sort_order?: number
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          features?: Json
+          id?: string
+          is_active?: boolean
+          monthly_credits?: number
+          name?: string
+          price_cents?: number
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          updated_at: string
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id: string
+          updated_at?: string
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+          username?: string | null
+        }
+        Relationships: []
+      }
+      tts_history: {
+        Row: {
+          audio_mime: string | null
+          audio_path: string | null
+          char_count: number | null
+          created_at: string
+          duration_ms: number | null
+          id: string
+          language: string
+          language_code: string | null
+          settings: Json
+          text: string
+          user_id: string
+          voice_age: number | null
+          voice_gender: string | null
+          voice_name: string
+        }
+        Insert: {
+          audio_mime?: string | null
+          audio_path?: string | null
+          char_count?: number | null
+          created_at?: string
+          duration_ms?: number | null
+          id?: string
+          language: string
+          language_code?: string | null
+          settings?: Json
+          text: string
+          user_id: string
+          voice_age?: number | null
+          voice_gender?: string | null
+          voice_name: string
+        }
+        Update: {
+          audio_mime?: string | null
+          audio_path?: string | null
+          char_count?: number | null
+          created_at?: string
+          duration_ms?: number | null
+          id?: string
+          language?: string
+          language_code?: string | null
+          settings?: Json
+          text?: string
+          user_id?: string
+          voice_age?: number | null
+          voice_gender?: string | null
+          voice_name?: string
+        }
+        Relationships: []
+      }
+      user_credits: {
+        Row: {
+          credits_remaining: number
+          credits_used: number
+          period_start: string
+          plan_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          credits_remaining?: number
+          credits_used?: number
+          period_start?: string
+          plan_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          credits_remaining?: number
+          credits_used?: number
+          period_start?: string
+          plan_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_credits_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +367,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const
